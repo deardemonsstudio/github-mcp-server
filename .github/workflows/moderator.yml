@@ -1,28 +1,22 @@
-name: AI Moderator
+name: GitHub MCP Server Workflow — SYSTEM FREEZE
+
 on:
-  issues:
-    types: [opened]
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  spam-detection:
+  system-freeze:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-      models: read
-      contents: read
     steps:
-      - uses: actions/checkout@v6
-      - uses: github/ai-moderator@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          spam-label: 'spam'
-          ai-label: 'ai-generated'
-          minimize-detected-comments: true
-          enable-spam-detection: true
-          enable-link-spam-detection: true
-          enable-ai-detection: true
+      - name: Refuse execution during pristine audit gate
+        shell: bash
+        run: |
+          echo 'SYSTEM FREEZE — NOT READY TO RESTART.'
+          echo 'This github-mcp-server workflow is suspended until the whole-system audit and pristine restart gate are complete and Kirstie explicitly authorises restart.'
+          exit 1
+
+# GLOBAL SYSTEM FREEZE — 2 SEPTEMBER 2026
+# Original workflow is preserved in Git history for audit/salvage.
+# No CI, issue automation, moderation, publishing, release or registry automation is permitted during the freeze.

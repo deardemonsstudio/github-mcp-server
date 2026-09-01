@@ -1,52 +1,22 @@
-name: Build and Test Go Project
-on: [push, pull_request]
+name: GitHub MCP Server Workflow — SYSTEM FREEZE
+
+on:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
+  system-freeze:
+    runs-on: ubuntu-latest
     steps:
-      - name: Force git to use LF
-        # This step is required on Windows to work around go mod tidy -diff issues caused by CRLF line endings.
-        # TODO: replace with a checkout option when https://github.com/actions/checkout/issues/226 is implemented
-        if: runner.os == 'Windows'
+      - name: Refuse execution during pristine audit gate
+        shell: bash
         run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
+          echo 'SYSTEM FREEZE — NOT READY TO RESTART.'
+          echo 'This github-mcp-server workflow is suspended until the whole-system audit and pristine restart gate are complete and Kirstie explicitly authorises restart.'
+          exit 1
 
-      - name: Check out code
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: ui/package-lock.json
-
-      - name: Build UI
-        shell: bash
-        run: script/build-ui
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: "go.mod"
-
-      - name: Tidy dependencies
-        run: go mod tidy -diff
-
-      - name: Run unit tests
-        shell: bash
-        run: script/test
-
-      - name: Build
-        run: go build -v ./cmd/github-mcp-server
+# GLOBAL SYSTEM FREEZE — 2 SEPTEMBER 2026
+# Original workflow is preserved in Git history for audit/salvage.
+# No CI, issue automation, moderation, publishing, release or registry automation is permitted during the freeze.
