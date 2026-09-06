@@ -1,19 +1,19 @@
-name: Label issues for AI review
+name: GitHub MCP Server Workflow — SYSTEM FREEZE
+
 on:
-  issues:
-    types:
-      - reopened
-      - opened
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  label_issues:
+  system-freeze:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - name: Add AI review label to issue
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
-          LABELS: "request ai review"
+      - name: Refuse execution during pristine audit gate
+        run: |
+          echo 'SYSTEM FREEZE — NOT READY TO RESTART.'
+          echo 'This historical workflow ref is suspended until the pristine restart gate is completed and Kirstie explicitly authorises restart.'
+          exit 1
+
+# Historical branch retained for provenance; ordinary CI, issue automation, publishing, release and registry automation are suspended.
